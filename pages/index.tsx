@@ -3,7 +3,7 @@ import getData from "@/components/getData"
 import Activity from "@/components/interface/Activity";
 import Room from "@/components/interface/Room";
 import parseRoomNumber from "@/components/parseRoomNumber";
-
+import getRoomDescription from "@/components/getRoomDescription";
 
 export default function Index() {
     const avaliableRooms = new Set();
@@ -33,14 +33,25 @@ export default function Index() {
         }
     }
 
+    // @ts-expect-error
+    const date = new Date(data["META"].lastUpdated).toLocaleString();
+
     return (
         <>
             <h1>Index</h1>
 
-            <h2>Available Rooms</h2>
+            <h2>Available rooms in the coming hour</h2>
+
+            <p>
+                Last updated {date}
+            </p>
             <ul>
                 {Array.from(avaliableRooms).sort().map((room, i) => (
-                    <li key={i}>{room as string}</li>
+                    <li key={i}>
+                        {room as string}
+                        <span style={{ width: "1rem", display: "inline-block" }}></span>
+                        {getRoomDescription(room as string)}
+                    </li>
                 ))}
             </ul>
         </>
