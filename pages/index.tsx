@@ -54,6 +54,7 @@ export default function Index() {
                     </li>
                 ))}
             </ul>
+            <iframe src="https://nomomon.github.io/notion-namaz-time/" style={{ width: "90vw" }}></iframe>
         </>
     )
 }
