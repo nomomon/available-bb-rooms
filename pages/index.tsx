@@ -1,3 +1,4 @@
+// @ts-nocheck
 import getAvaliableRooms from "@/components/getAvaliableRooms"
 import getData from "@/components/getData"
 import Activity from "@/components/interface/Activity";
@@ -5,8 +6,20 @@ import Room from "@/components/interface/Room";
 import parseRoomNumber from "@/components/parseRoomNumber";
 import getRoomDescription from "@/components/getRoomDescription";
 
+Set.difference = function (s1, s2) {
+    if (!s1 instanceof Set || !s2 instanceof Set) {
+        console.log("The given objects are not of type Set");
+        return null;
+    }
+    let newSet = new Set();
+    s1.forEach(elem => newSet.add(elem));
+    s2.forEach(elem => newSet.delete(elem));
+    return newSet;
+}
+
 export default function Index() {
     const avaliableRooms = new Set();
+    const allRooms = new Set();
 
     const data = getData();
 
@@ -23,13 +36,17 @@ export default function Index() {
         // @ts-expect-error
         const activities = data[ACTIVITY[i]] as Activity[];
 
-        console.log(ROOMS[i], ACTIVITY)
-
         const r = getAvaliableRooms(activities, rooms);
 
         for (let j = 0; j < r.length; j++) {
             const roomNumber = parseRoomNumber(r[j]);
             avaliableRooms.add(roomNumber);
+        }
+
+        const a = getAvaliableRooms([], rooms);
+        for (let j = 0; j < a.length; j++) {
+            const roomNumber = parseRoomNumber(a[j]);
+            allRooms.add(roomNumber);
         }
     }
 
@@ -54,6 +71,19 @@ export default function Index() {
                     </li>
                 ))}
             </ul>
+
+            <details>
+                <summary>Unavailable rooms</summary>
+                <ul>
+                    {Array.from(Set.difference(allRooms, avaliableRooms)).sort().map((room, i) => (
+                        <li key={i}>
+                            {room as string}
+                            <span style={{ width: "1rem", display: "inline-block" }}></span>
+                            {getRoomDescription(room as string)}
+                        </li>
+                    ))}
+                </ul>
+            </details>
             <iframe src="https://nomomon.github.io/notion-namaz-time/" style={{ width: "90vw" }}></iframe>
         </>
     )
